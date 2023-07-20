@@ -38,6 +38,7 @@ public class UserRestController {
     @PutMapping("/update")
     public  ResponseEntity<UserModel> updateUserInfo(@RequestBody UserModel user){
         UserModel updateUserInfo = userService.updateUserInfo(user);
+        logger.info("✅UserRestController:updateUserInfo, model::"+user.toString());
         return new ResponseEntity<>(updateUserInfo, HttpStatus.OK);
     }
 
