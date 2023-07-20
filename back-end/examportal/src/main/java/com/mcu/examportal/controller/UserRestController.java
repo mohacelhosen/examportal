@@ -2,6 +2,8 @@ package com.mcu.examportal.controller;
 
 import com.mcu.examportal.model.UserModel;
 import com.mcu.examportal.service.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/api/user")
 public class UserRestController {
+    Logger logger = LoggerFactory.getLogger(UserRestController.class);
     @Autowired
     private IUserService userService;
 
@@ -20,6 +23,7 @@ public class UserRestController {
     @PostMapping("/signup")
     public ResponseEntity<UserModel> signUp(@RequestBody UserModel userModel){
         UserModel registerUser = userService.registerUser(userModel);
+        logger.info("UserRestController:signUp, model::"+registerUser.toString());
         return new ResponseEntity<>(registerUser, HttpStatus.CREATED);
     }
 
