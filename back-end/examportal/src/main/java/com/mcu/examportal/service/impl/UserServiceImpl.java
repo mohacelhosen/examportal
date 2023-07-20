@@ -12,7 +12,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -109,6 +112,19 @@ public class UserServiceImpl implements IUserService {
         }else {
             throw new UserNotFoundException("User Not Found!");
         }
+    }
+
+    @Override
+    public List<UserModel> allUser() {
+        List<UserEntity> entityList = userRepository.findAll();
+        List<UserModel> allModel = new ArrayList<>();
+        for (UserEntity singleUser: entityList){
+            UserModel tempModel = new UserModel();
+            BeanUtils.copyProperties(singleUser, tempModel);
+            tempModel.setDesignation(singleUser.getRoles());
+            allModel.add(tempModel);
+        }
+        return allModel;
     }
 
 

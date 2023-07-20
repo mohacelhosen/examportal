@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/user")
@@ -40,6 +42,12 @@ public class UserRestController {
     public ResponseEntity<String> deleteUser(@PathVariable String userEmail){
         String message = userService.deleteUser(userEmail);
         return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/all")
+    public ResponseEntity<List<UserModel>> allUsers(){
+        List<UserModel> userModels = userService.allUser();
+        return  new ResponseEntity<>(userModels, HttpStatus.OK);
     }
 
 }
