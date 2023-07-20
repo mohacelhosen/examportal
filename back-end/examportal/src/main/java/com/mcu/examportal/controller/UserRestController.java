@@ -31,6 +31,7 @@ public class UserRestController {
     @GetMapping("/find/{userEmail}")
     public  ResponseEntity<UserModel> findUserByEmail(@PathVariable String userEmail){
         UserModel user = userService.getUser(userEmail);
+        logger.info("✅UserRestController:findUserByEmail, user::"+user.toString());
         return new ResponseEntity<>(user, HttpStatus.FOUND);
     }
 
