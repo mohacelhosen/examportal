@@ -42,6 +42,7 @@ public class UserServiceImpl implements IUserService {
             if (savedUser.getId()!=null){
                 BeanUtils.copyProperties(savedUser,userModel2);
                 userModel2.setDesignation(savedUser.getRoles());
+                logger.info("UserServiceImpl:registerUser ✅::"+userModel2.toString());
                 return userModel2;
             }else {
                 throw new UserNotRegisterException("Fail to Register");
@@ -53,25 +54,29 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserModel getUser(String userEmail) {
         UserModel userModel = new UserModel();
+        logger.info("UserServiceImpl:getUser, email::"+userEmail.toString());
         Optional<UserEntity> userEntity = userRepository.findByEmail(userEmail);
         if (userEntity.isPresent()){
             BeanUtils.copyProperties(userEntity.get(), userModel);
             userModel.setDesignation(userEntity.get().getRoles());
+            logger.info("UserServiceImpl:getUser, ✅::"+userModel.toString());
             return userModel;
         }else {
             throw new UserNotFoundException("User Not Found!");
         }
 
     }
-    //    <----------------- delete user info------------------------->
 
+    //    <----------------- delete user info------------------------->
     @Override
     public String deleteUser(String email) {
+        logger.info("UserServiceImpl:deleteUser, email::"+email.toString());
         Optional<UserEntity> user = userRepository.findByEmail(email);
         Long userId=null;
         if (user.isPresent()){
             userId = user.get().getId();
             userRepository.deleteById(userId);
+            logger.info("UserServiceImpl:deleteUser, ✅::");
             return "user Deleted Successfully";
         }else {
             throw new UserNotFoundException("User Not Found!");
@@ -84,6 +89,7 @@ public class UserServiceImpl implements IUserService {
         UserEntity newUserEntity= new UserEntity();
         Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
         if (userEntity.isPresent()){
+            logger.info("UserServiceImpl:updateUserInfo, 0️⃣::"+userEntity.toString());
             BeanUtils.copyProperties(user,newUserEntity);
             if (user.getDesignation().equalsIgnoreCase("teacher")){
                 newUserEntity.setRoles("teacher");
@@ -92,11 +98,13 @@ public class UserServiceImpl implements IUserService {
             }
             newUserEntity.setEnabled(userEntity.get().isEnabled());
             newUserEntity.setId(userEntity.get().getId());
+            logger.info("UserServiceImpl:updateUserInfo, newEntity::"+newUserEntity.toString());
 
             UserEntity updateUser = userRepository.save(newUserEntity);
             UserModel updateModel = new UserModel();
             BeanUtils.copyProperties(updateUser, updateModel);
             updateModel.setDesignation(updateUser.getRoles());
+            logger.info("UserServiceImpl:updateUserInfo, ✅::"+updateModel.toString());
             return  updateModel;
         }else {
             throw new UserNotFoundException("User Not Found!");
