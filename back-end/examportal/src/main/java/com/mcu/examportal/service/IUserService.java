@@ -7,4 +7,5 @@ public interface IUserService {
     public UserModel getUser(String userEmail);
 
     public String deleteUser(String email);
+    public UserModel updateUserInfo(UserModel user);
 }

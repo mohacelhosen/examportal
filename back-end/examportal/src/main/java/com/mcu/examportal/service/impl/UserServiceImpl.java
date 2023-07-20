@@ -79,4 +79,29 @@ public class UserServiceImpl implements IUserService {
     }
 
     //    <----------------- update user info ------------------------->
+    @Override
+    public UserModel updateUserInfo(UserModel user) {
+        UserEntity newUserEntity= new UserEntity();
+        Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
+        if (userEntity.isPresent()){
+            BeanUtils.copyProperties(user,newUserEntity);
+            if (user.getDesignation().equalsIgnoreCase("teacher")){
+                newUserEntity.setRoles("teacher");
+            }else {
+                newUserEntity.setRoles("student");
+            }
+            newUserEntity.setEnabled(userEntity.get().isEnabled());
+            newUserEntity.setId(userEntity.get().getId());
+
+            UserEntity updateUser = userRepository.save(newUserEntity);
+            UserModel updateModel = new UserModel();
+            BeanUtils.copyProperties(updateUser, updateModel);
+            updateModel.setDesignation(updateUser.getRoles());
+            return  updateModel;
+        }else {
+            throw new UserNotFoundException("User Not Found!");
+        }
+    }
+
+
 }
