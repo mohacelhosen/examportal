@@ -52,6 +52,7 @@ public class UserRestController {
     @GetMapping("/users/all")
     public ResponseEntity<List<UserModel>> allUsers(){
         List<UserModel> userModels = userService.allUser();
+        logger.info("✅UserRestController:allUsers");
         return  new ResponseEntity<>(userModels, HttpStatus.OK);
     }
 
