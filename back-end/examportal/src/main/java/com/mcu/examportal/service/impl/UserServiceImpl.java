@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,6 +40,7 @@ public class UserServiceImpl implements IUserService {
             userEntity.setEnabled(true);
             BeanUtils.copyProperties(userModel, userEntity);
             logger.info("UserServiceImpl:registerUser, before saved::"+userEntity.toString());
+            userEntity.setRandomPassword( generatePassword(8).toString());
             UserEntity savedUser = userRepository.save(userEntity);
             if (savedUser.getId()!=null){
                 BeanUtils.copyProperties(savedUser,userModel2);
@@ -143,8 +145,22 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public String forget(String email) {
-        
-        return null;
+        UserEntity userEntity= new UserEntity();
+        Optional<UserEntity> user = userRepository.findByEmail(email);
+        logger.info("UserServiceImpl:forget, Before update password::");
+        String randomPassword =null;
+        if (user.isPresent()){
+            randomPassword = user.get().getRandomPassword();
+            BeanUtils.copyProperties(user.get(),userEntity);
+            userEntity.setRandomPassword(generatePassword(8).toString());
+            userEntity.setPassword(randomPassword);
+            UserEntity updateUserPassword = userRepository.save(userEntity);
+            logger.info("UserServiceImpl:forget, After update password::"+updateUserPassword.toString());
+            logger.info("PWD::"+randomPassword);
+            return randomPassword;
+        }else {
+            throw new UserNotFoundException("Invalid Email Address!");
+        }
     }
 
     public char[] generatePassword(int len) {
