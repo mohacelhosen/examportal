@@ -1,5 +1,6 @@
 package com.mcu.examportal.controller;
 
+import com.mcu.examportal.model.LoginModel;
 import com.mcu.examportal.model.UserModel;
 import com.mcu.examportal.service.IUserService;
 import org.slf4j.Logger;
@@ -50,11 +51,25 @@ public class UserRestController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+//    <------------------------ get all user info --------------------->
     @GetMapping("/users/all")
     public ResponseEntity<List<UserModel>> allUsers(){
         List<UserModel> userModels = userService.allUser();
         logger.info("✅UserRestController:allUsers");
         return  new ResponseEntity<>(userModels, HttpStatus.OK);
+    }
+
+//    <---------------------- login -------------------------->
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginModel loginInfo){
+        boolean login = userService.login(loginInfo);
+        String message= null;
+        if (login){
+            message="login Successful😇";
+        }else {
+            message="login Fail😵";
+        }
+        return  new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 }
