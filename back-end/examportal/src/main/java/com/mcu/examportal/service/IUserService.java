@@ -15,4 +15,6 @@ public interface IUserService {
     public List<UserModel> allUser();
 
     public boolean login(LoginModel loginInfo);
+
+    public String forget(String email);
 }
