@@ -3,6 +3,7 @@ package com.mcu.examportal.service.impl;
 import com.mcu.examportal.entity.UserEntity;
 import com.mcu.examportal.exception.UserNotFoundException;
 import com.mcu.examportal.exception.UserNotRegisterException;
+import com.mcu.examportal.model.LoginModel;
 import com.mcu.examportal.model.UserModel;
 import com.mcu.examportal.repository.UserRepository;
 import com.mcu.examportal.service.IUserService;
@@ -125,6 +126,22 @@ public class UserServiceImpl implements IUserService {
             allModel.add(tempModel);
         }
         return allModel;
+    }
+
+    @Override
+    public boolean login(LoginModel loginInfo) {
+        String email = loginInfo.getEmail();
+        String password = loginInfo.getPassword();
+        Optional<UserEntity> userEntity = userRepository.findByEmail(email);
+        if (userEntity.isPresent()){
+            if (userEntity.get().getEmail().equalsIgnoreCase(email) && userEntity.get().getPassword().equals(password)){
+                return true;
+            }else {
+                throw new UserNotFoundException("Email or Password is wrong!");
+            }
+        }else {
+            throw new UserNotFoundException("Invalid Email Address!");
+        }
     }
 
 

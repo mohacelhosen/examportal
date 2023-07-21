@@ -1,5 +1,6 @@
 package com.mcu.examportal.service;
 
+import com.mcu.examportal.model.LoginModel;
 import com.mcu.examportal.model.UserModel;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface IUserService {
     public String deleteUser(String email);
     public UserModel updateUserInfo(UserModel user);
     public List<UserModel> allUser();
+
+    public boolean login(LoginModel loginInfo);
 }
