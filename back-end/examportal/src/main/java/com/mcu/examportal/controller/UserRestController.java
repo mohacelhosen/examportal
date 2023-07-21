@@ -72,4 +72,11 @@ public class UserRestController {
         return  new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+//    <----------- forget password ---------->
+    @GetMapping("/forget/{email}")
+    public  ResponseEntity<String> forgetPassword(@PathVariable String email){
+        String forget = userService.forget(email);
+        return new ResponseEntity<>(forget, HttpStatus.OK);
+    }
+
 }
