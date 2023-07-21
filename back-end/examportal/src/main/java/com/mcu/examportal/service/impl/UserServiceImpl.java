@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,10 +18,14 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements IUserService {
     private final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
-    @Autowired
-    private UserRepository userRepository;
 
-//    <----------------- Register User------------------------->
+    private UserRepository userRepository;
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    //    <----------------- Register User------------------------->
     @Override
     public UserModel registerUser(UserModel userModel) {
         UserEntity userEntity = new UserEntity();
@@ -40,7 +43,7 @@ public class UserServiceImpl implements IUserService {
             userEntity.setEnabled(true);
             BeanUtils.copyProperties(userModel, userEntity);
             logger.info("UserServiceImpl:registerUser, before saved::"+userEntity.toString());
-            userEntity.setRandomPassword( generatePassword(8).toString());
+            userEntity.setRandomPassword(Arrays.toString(generatePassword(8)));
             UserEntity savedUser = userRepository.save(userEntity);
             if (savedUser.getId()!=null){
                 BeanUtils.copyProperties(savedUser,userModel2);
@@ -57,7 +60,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserModel getUser(String userEmail) {
         UserModel userModel = new UserModel();
-        logger.info("UserServiceImpl:getUser, email::"+userEmail.toString());
+        logger.info("UserServiceImpl:getUser, email::"+ userEmail);
         Optional<UserEntity> userEntity = userRepository.findByEmail(userEmail);
         if (userEntity.isPresent()){
             BeanUtils.copyProperties(userEntity.get(), userModel);
@@ -73,7 +76,7 @@ public class UserServiceImpl implements IUserService {
     //    <----------------- delete user info------------------------->
     @Override
     public String deleteUser(String email) {
-        logger.info("UserServiceImpl:deleteUser, email::"+email.toString());
+        logger.info("UserServiceImpl:deleteUser, email::"+ email);
         Optional<UserEntity> user = userRepository.findByEmail(email);
         Long userId=null;
         if (user.isPresent()){
@@ -147,12 +150,12 @@ public class UserServiceImpl implements IUserService {
     public String forget(String email) {
         UserEntity userEntity= new UserEntity();
         Optional<UserEntity> user = userRepository.findByEmail(email);
-        logger.info("UserServiceImpl:forget, Before update password::");
         String randomPassword =null;
         if (user.isPresent()){
+            logger.info("UserServiceImpl:forget, Before update password::"+user.get().getPassword());
             randomPassword = user.get().getRandomPassword();
             BeanUtils.copyProperties(user.get(),userEntity);
-            userEntity.setRandomPassword(generatePassword(8).toString());
+            userEntity.setRandomPassword(Arrays.toString(generatePassword(8)));
             userEntity.setPassword(randomPassword);
             UserEntity updateUserPassword = userRepository.save(userEntity);
             logger.info("UserServiceImpl:forget, After update password::"+updateUserPassword.toString());
