@@ -115,9 +115,12 @@ public class UserServiceImpl implements IUserService {
             BeanUtils.copyProperties(user,newUserEntity);
             if (user.getDesignation().equalsIgnoreCase("teacher")){
                 newUserEntity.setRoles("teacher");
+            }else if (user.getDesignation().equalsIgnoreCase("admin")){
+                newUserEntity.setRoles("admin");
             }else {
                 newUserEntity.setRoles("student");
             }
+
             newUserEntity.setEnabled(userEntity.get().isEnabled());
             newUserEntity.setId(userEntity.get().getId());
             logger.info("UserServiceImpl:updateUserInfo, newEntity::"+newUserEntity.toString());
@@ -152,7 +155,7 @@ public class UserServiceImpl implements IUserService {
         String password = loginInfo.getPassword();
         Optional<UserEntity> userEntity = userRepository.findByEmail(email);
         if (userEntity.isPresent()){
-            if (userEntity.get().getEmail().equalsIgnoreCase(email) && userEntity.get().getPassword().equals(password)){
+            if (userEntity.get().getEmail().equalsIgnoreCase(email) && userEntity.get().getPassword().equals(encoder.encode(password))){
                 return true;
             }else {
                 throw new UserNotFoundException("Email or Password is wrong!");
@@ -172,7 +175,7 @@ public class UserServiceImpl implements IUserService {
             randomPassword = user.get().getRandomPassword();
             BeanUtils.copyProperties(user.get(),userEntity);
             userEntity.setRandomPassword(Arrays.toString(generatePassword(8)));
-            userEntity.setPassword(randomPassword);
+            userEntity.setPassword(encoder.encode(randomPassword));
             UserEntity updateUserPassword = userRepository.save(userEntity);
             logger.info("UserServiceImpl:forget, After update password::"+updateUserPassword.toString());
             logger.info("PWD::"+randomPassword);
