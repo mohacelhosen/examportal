@@ -53,11 +53,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers( "/swagger-ui/index.html","/api/exam-portal/signup", "/api/exam-portal/authenticate").permitAll()
+                .authorizeRequests()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html", "/webjars/**").permitAll()
+                .requestMatchers("/api/exam-portal/signup", "/api/exam-portal/authenticate").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/**")
-                .authenticated().and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
