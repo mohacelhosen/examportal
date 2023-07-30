@@ -1,5 +1,7 @@
 package com.mcu.examportal.service.impl;
 
+import com.mcu.examportal.exception.IncompleteUserInfoException;
+import org.apache.commons.lang3.StringUtils;
 import com.mcu.examportal.entity.UserEntity;
 import com.mcu.examportal.exception.UserNotFoundException;
 import com.mcu.examportal.exception.UserNotRegisterException;
@@ -11,12 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class UserServiceImpl implements IUserService {
+    @Autowired
+    private PasswordEncoder encoder;
     private final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserRepository userRepository;
@@ -31,17 +36,28 @@ public class UserServiceImpl implements IUserService {
         UserEntity userEntity = new UserEntity();
         UserModel userModel2= new UserModel();
 
+        if (StringUtils.isAnyEmpty(
+                userModel.getFirstName(), userModel.getLastName(),
+                userModel.getEmail(), userModel.getGender(),
+                userModel.getPassword(), userModel.getDesignation())
+                || userModel.getDob() == null) {
+            throw new IncompleteUserInfoException("Incomplete signup information");
+        }
+
         if (userRepository.findByEmail(userModel.getEmail()).isPresent()){
             logger.info("UserServiceImpl:registerUser, Already Exist::"+userRepository.findByEmail(userModel.getEmail()));
             throw new UserNotRegisterException("Already Registered");
         }else{
             if (userModel.getDesignation().equalsIgnoreCase("teacher")){
                 userEntity.setRoles("teacher");
+            }else if (userModel.getDesignation().equalsIgnoreCase("admin")){
+                userEntity.setRoles("admin");
             }else {
                 userEntity.setRoles("student");
             }
             userEntity.setEnabled(true);
             BeanUtils.copyProperties(userModel, userEntity);
+            userEntity.setPassword(encoder.encode(userModel.getPassword()));
             logger.info("UserServiceImpl:registerUser, before saved::"+userEntity.toString());
             userEntity.setRandomPassword(Arrays.toString(generatePassword(8)));
             UserEntity savedUser = userRepository.save(userEntity);

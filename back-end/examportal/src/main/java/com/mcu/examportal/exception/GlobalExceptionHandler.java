@@ -19,4 +19,11 @@ public class GlobalExceptionHandler {
         model.setExceptionName(unre.getMessage());
         return  new ResponseEntity<>(model, HttpStatus.ALREADY_REPORTED);
     }
+    @ExceptionHandler(IncompleteUserInfoException.class)
+    public  ResponseEntity<ExceptionModel> userNotRegister(IncompleteUserInfoException incompleteUserInfo){
+        ExceptionModel model = new ExceptionModel();
+        model.setCode("InCompleteUserInfo");
+        model.setExceptionName(incompleteUserInfo.getMessage());
+        return  new ResponseEntity<>(model, HttpStatus.ALREADY_REPORTED);
+    }
 }
