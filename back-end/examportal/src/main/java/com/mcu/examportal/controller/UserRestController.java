@@ -32,8 +32,9 @@ public class UserRestController {
     //    <--------------------- register the user ------------------->
     @PostMapping("/signup")
     public ResponseEntity<UserModel> signUp(@RequestBody UserModel userModel) {
+        logger.info("UserRestController::signUp, 🤖Model=>"+userModel.toString());
         UserModel registerUser = userService.registerUser(userModel);
-        logger.info("UserRestController:signUp, model::" + registerUser.toString());
+        logger.info("UserRestController:signUp, 🤖model::" + registerUser.toString());
         return new ResponseEntity<>(registerUser, HttpStatus.CREATED);
     }
 
