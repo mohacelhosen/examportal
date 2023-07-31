@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,6 +41,7 @@ public class UserRestController {
 
     //    <-------------------- Find user by Email ------------------>
     @GetMapping("/find/{userEmail}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN','TEACHER')")
     public ResponseEntity<UserModel> findUserByEmail(@PathVariable String userEmail) {
         UserModel user = userService.getUser(userEmail);
         logger.info("✅UserRestController:findUserByEmail, user::" + user.toString());
@@ -48,6 +50,7 @@ public class UserRestController {
 
     //    <-------------------- update user information ------------------>
     @PutMapping("/update")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN','TEACHER')")
     public ResponseEntity<UserModel> updateUserInfo(@RequestBody UserModel user) {
         UserModel updateUserInfo = userService.updateUserInfo(user);
         logger.info("✅UserRestController:updateUserInfo, model::" + user.toString());
@@ -56,13 +59,16 @@ public class UserRestController {
 
     //    <-------------------- update user information ------------------>
     @DeleteMapping("/delete/{userEmail}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN','TEACHER')")
     public ResponseEntity<String> deleteUser(@PathVariable String userEmail) {
         String message = userService.deleteUser(userEmail);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     //    <------------------------ get all user info --------------------->
+
     @GetMapping("/users/all")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<List<UserModel>> allUsers() {
         List<UserModel> userModels = userService.allUser();
         logger.info("✅UserRestController:allUsers");
@@ -84,6 +90,7 @@ public class UserRestController {
 
     //    <----------- forget password ---------->
     @GetMapping("/forget/{email}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN','TEACHER')")
     public ResponseEntity<String> forgetPassword(@PathVariable String email) {
         String forget = userService.forget(email);
         return new ResponseEntity<>(forget, HttpStatus.OK);

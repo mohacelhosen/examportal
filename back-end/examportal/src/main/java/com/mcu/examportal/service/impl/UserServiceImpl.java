@@ -49,11 +49,11 @@ public class UserServiceImpl implements IUserService {
             throw new UserNotRegisterException("Already Registered");
         }else{
             if (userModel.getDesignation().equalsIgnoreCase("teacher")){
-                userEntity.setRoles("teacher");
+                userEntity.setRoles("TEACHER");
             }else if (userModel.getDesignation().equalsIgnoreCase("admin")){
-                userEntity.setRoles("admin");
+                userEntity.setRoles("ADMIN");
             }else {
-                userEntity.setRoles("student");
+                userEntity.setRoles("USER");
             }
             userEntity.setEnabled(true);
             BeanUtils.copyProperties(userModel, userEntity);
@@ -114,11 +114,11 @@ public class UserServiceImpl implements IUserService {
             logger.info("UserServiceImpl:updateUserInfo, 0️⃣::"+userEntity.toString());
             BeanUtils.copyProperties(user,newUserEntity);
             if (user.getDesignation().equalsIgnoreCase("teacher")){
-                newUserEntity.setRoles("teacher");
+                newUserEntity.setRoles("TEACHER");
             }else if (user.getDesignation().equalsIgnoreCase("admin")){
-                newUserEntity.setRoles("admin");
+                newUserEntity.setRoles("ADMIN");
             }else {
-                newUserEntity.setRoles("student");
+                newUserEntity.setRoles("USER");
             }
 
             newUserEntity.setEnabled(userEntity.get().isEnabled());
