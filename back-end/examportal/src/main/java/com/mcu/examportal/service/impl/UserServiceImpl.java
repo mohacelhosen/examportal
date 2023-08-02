@@ -190,7 +190,7 @@ public class UserServiceImpl implements IUserService {
         String capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String smallLetters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
-        String specialCharacters = "!@#$%^&*_=+-/.?<>)";
+        String specialCharacters = "!@#$%^&*_=+-?<>)";
 
         String values = capitalLetters + smallLetters + numbers + specialCharacters;
 
