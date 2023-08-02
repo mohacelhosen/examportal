@@ -55,12 +55,14 @@ public class UserServiceImpl implements IUserService {
             }else {
                 userEntity.setRoles("USER");
             }
-            userEntity.setEnabled(true);
             BeanUtils.copyProperties(userModel, userEntity);
             userEntity.setPassword(encoder.encode(userModel.getPassword()));
             logger.info("UserServiceImpl:registerUser, before saved::"+userEntity.toString());
-            userEntity.setRandomPassword(Arrays.toString(generatePassword(8)));
+            userEntity.setRandomPassword(generatePassword(8).toString());
+            // After setting the roles in userEntity based on userModel.getDesignation()
             UserEntity savedUser = userRepository.save(userEntity);
+
+
             if (savedUser.getId()!=null){
                 BeanUtils.copyProperties(savedUser,userModel2);
                 userModel2.setDesignation(savedUser.getRoles());
@@ -121,7 +123,6 @@ public class UserServiceImpl implements IUserService {
                 newUserEntity.setRoles("USER");
             }
 
-            newUserEntity.setEnabled(userEntity.get().isEnabled());
             newUserEntity.setId(userEntity.get().getId());
             logger.info("UserServiceImpl:updateUserInfo, newEntity::"+newUserEntity.toString());
 

@@ -1,7 +1,7 @@
 package com.mcu.examportal.config;
 
 import com.mcu.examportal.service.JwtService;
-import com.mcu.examportal.service.UserDetailsServiceImpl;
+import com.mcu.examportal.service.details.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,14 +32,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             userEmail = jwtService.extractUserEmail(token);
         }
 
+        logger.info("JwtAuthFilter: Token: " + token);
+        logger.info("JwtAuthFilter: User Email: " + userEmail);
+
         if (userEmail !=null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
             if (jwtService.validateToken(token, userDetails)){
+                logger.info("JwtAuthFilter: Token validated successfully for user: " + userEmail);
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
+            } else {
+                logger.info("JwtAuthFilter: Token validation failed for user: " + userEmail);
             }
         }
         filterChain.doFilter(request, response);

@@ -1,6 +1,6 @@
 package com.mcu.examportal.config;
 
-import com.mcu.examportal.service.UserDetailsServiceImpl;
+import com.mcu.examportal.service.details.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,10 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-
     @Autowired
     private JwtAuthFilter authFilter;
-
 
     // Password Encoder Bean
     @Bean
@@ -34,30 +32,28 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    //    Authentication Manager Bean
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider daoAuthProvider = new
-                DaoAuthenticationProvider();
-        daoAuthProvider.setUserDetailsService(userDetailsService);
-        daoAuthProvider.setPasswordEncoder(passwordEncoder());
-        return daoAuthProvider;
     }
 
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html", "/webjars/**").permitAll()
                 .requestMatchers("/api/exam-portal/signup", "/api/exam-portal/authenticate").permitAll()
-                .anyRequest().authenticated()
                 .and()
+                .authorizeHttpRequests().requestMatchers("/api/exam-portal/**")
+                .authenticated().and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -65,6 +61,5 @@ public class SecurityConfig {
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 
 }
