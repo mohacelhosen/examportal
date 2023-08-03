@@ -60,7 +60,7 @@ public class UserRestController {
         return new ResponseEntity<>(updateUserInfo, HttpStatus.OK);
     }
 
-    //    <-------------------- update user information ------------------>
+    //    <-------------------- delete user information ------------------>
     @DeleteMapping("/delete/{userEmail}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN','TEACHER')")
     public ResponseEntity<String> deleteUser(@PathVariable String userEmail) {
@@ -93,7 +93,7 @@ public class UserRestController {
 
     //    <----------- forget password ---------->
     @GetMapping("/forget/{email}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN','TEACHER')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN','TEACHER')")
     public ResponseEntity<String> forgetPassword(@PathVariable String email) {
         String forget = userService.forget(email);
         return new ResponseEntity<>(forget, HttpStatus.OK);

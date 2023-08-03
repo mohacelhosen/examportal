@@ -22,9 +22,10 @@ import java.util.*;
 public class UserServiceImpl implements IUserService {
     @Autowired
     private PasswordEncoder encoder;
-    private final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserRepository userRepository;
+
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -34,7 +35,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserModel registerUser(UserModel userModel) {
         UserEntity userEntity = new UserEntity();
-        UserModel userModel2= new UserModel();
+        UserModel userModel2 = new UserModel();
 
         if (StringUtils.isAnyEmpty(
                 userModel.getFirstName(), userModel.getLastName(),
@@ -44,31 +45,31 @@ public class UserServiceImpl implements IUserService {
             throw new IncompleteUserInfoException("Incomplete signup information");
         }
 
-        if (userRepository.findByEmail(userModel.getEmail()).isPresent()){
-            logger.info("UserServiceImpl:registerUser, Already Exist::"+userRepository.findByEmail(userModel.getEmail()));
+        if (userRepository.findByEmail(userModel.getEmail()).isPresent()) {
+            logger.info("UserServiceImpl:registerUser, Already Exist::" + userRepository.findByEmail(userModel.getEmail()));
             throw new UserNotRegisterException("Already Registered");
-        }else{
-            if (userModel.getDesignation().equalsIgnoreCase("teacher")){
+        } else {
+            if (userModel.getDesignation().equalsIgnoreCase("teacher")) {
                 userEntity.setRoles("TEACHER");
-            }else if (userModel.getDesignation().equalsIgnoreCase("admin")){
+            } else if (userModel.getDesignation().equalsIgnoreCase("admin")) {
                 userEntity.setRoles("ADMIN");
-            }else {
+            } else {
                 userEntity.setRoles("USER");
             }
             BeanUtils.copyProperties(userModel, userEntity);
             userEntity.setPassword(encoder.encode(userModel.getPassword()));
-            logger.info("UserServiceImpl:registerUser, before saved::"+userEntity.toString());
-            userEntity.setRandomPassword(generatePassword(8).toString());
+            logger.info("UserServiceImpl:registerUser, before saved::" + userEntity.toString());
+            userEntity.setRandomPassword(generatePassword(8));
             // After setting the roles in userEntity based on userModel.getDesignation()
             UserEntity savedUser = userRepository.save(userEntity);
 
 
-            if (savedUser.getId()!=null){
-                BeanUtils.copyProperties(savedUser,userModel2);
+            if (savedUser.getId() != null) {
+                BeanUtils.copyProperties(savedUser, userModel2);
                 userModel2.setDesignation(savedUser.getRoles());
-                logger.info("UserServiceImpl:registerUser ✅::"+userModel2.toString());
+                logger.info("UserServiceImpl:registerUser ✅::" + userModel2.toString());
                 return userModel2;
-            }else {
+            } else {
                 throw new UserNotRegisterException("Fail to Register");
             }
         }
@@ -78,14 +79,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserModel getUser(String userEmail) {
         UserModel userModel = new UserModel();
-        logger.info("UserServiceImpl:getUser, email::"+ userEmail);
+        logger.info("UserServiceImpl:getUser, email::" + userEmail);
         Optional<UserEntity> userEntity = userRepository.findByEmail(userEmail);
-        if (userEntity.isPresent()){
+        if (userEntity.isPresent()) {
             BeanUtils.copyProperties(userEntity.get(), userModel);
             userModel.setDesignation(userEntity.get().getRoles());
-            logger.info("UserServiceImpl:getUser, ✅::"+userModel.toString());
+            logger.info("UserServiceImpl:getUser, ✅::" + userModel.toString());
             return userModel;
-        }else {
+        } else {
             throw new UserNotFoundException("User Not Found!");
         }
 
@@ -94,15 +95,15 @@ public class UserServiceImpl implements IUserService {
     //    <----------------- delete user info------------------------->
     @Override
     public String deleteUser(String email) {
-        logger.info("UserServiceImpl:deleteUser, email::"+ email);
+        logger.info("UserServiceImpl:deleteUser, email::" + email);
         Optional<UserEntity> user = userRepository.findByEmail(email);
-        Long userId=null;
-        if (user.isPresent()){
+        Long userId = null;
+        if (user.isPresent()) {
             userId = user.get().getId();
             userRepository.deleteById(userId);
             logger.info("UserServiceImpl:deleteUser, ✅::");
             return "user Deleted Successfully";
-        }else {
+        } else {
             throw new UserNotFoundException("User Not Found!");
         }
     }
@@ -110,29 +111,29 @@ public class UserServiceImpl implements IUserService {
     //    <----------------- update user info ------------------------->
     @Override
     public UserModel updateUserInfo(UserModel user) {
-        UserEntity newUserEntity= new UserEntity();
+        UserEntity newUserEntity = new UserEntity();
         Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
-        if (userEntity.isPresent()){
-            logger.info("UserServiceImpl:updateUserInfo, 0️⃣::"+userEntity.toString());
-            BeanUtils.copyProperties(user,newUserEntity);
-            if (user.getDesignation().equalsIgnoreCase("teacher")){
+        if (userEntity.isPresent()) {
+            logger.info("UserServiceImpl:updateUserInfo, 0️⃣::" + userEntity.toString());
+            BeanUtils.copyProperties(user, newUserEntity);
+            if (user.getDesignation().equalsIgnoreCase("teacher")) {
                 newUserEntity.setRoles("TEACHER");
-            }else if (user.getDesignation().equalsIgnoreCase("admin")){
+            } else if (user.getDesignation().equalsIgnoreCase("admin")) {
                 newUserEntity.setRoles("ADMIN");
-            }else {
+            } else {
                 newUserEntity.setRoles("USER");
             }
 
             newUserEntity.setId(userEntity.get().getId());
-            logger.info("UserServiceImpl:updateUserInfo, newEntity::"+newUserEntity.toString());
+            logger.info("UserServiceImpl:updateUserInfo, newEntity::" + newUserEntity.toString());
 
             UserEntity updateUser = userRepository.save(newUserEntity);
             UserModel updateModel = new UserModel();
             BeanUtils.copyProperties(updateUser, updateModel);
             updateModel.setDesignation(updateUser.getRoles());
-            logger.info("UserServiceImpl:updateUserInfo, ✅::"+updateModel.toString());
-            return  updateModel;
-        }else {
+            logger.info("UserServiceImpl:updateUserInfo, ✅::" + updateModel.toString());
+            return updateModel;
+        } else {
             throw new UserNotFoundException("User Not Found!");
         }
     }
@@ -141,7 +142,7 @@ public class UserServiceImpl implements IUserService {
     public List<UserModel> allUser() {
         List<UserEntity> entityList = userRepository.findAll();
         List<UserModel> allModel = new ArrayList<>();
-        for (UserEntity singleUser: entityList){
+        for (UserEntity singleUser : entityList) {
             UserModel tempModel = new UserModel();
             BeanUtils.copyProperties(singleUser, tempModel);
             tempModel.setDesignation(singleUser.getRoles());
@@ -152,45 +153,58 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public boolean login(LoginModel loginInfo) {
+        if (loginInfo == null || loginInfo.getEmail() == null || loginInfo.getEmail().equals("") || loginInfo.getPassword() == null || loginInfo.getPassword().equals("")) {
+            throw new IncompleteUserInfoException("Email or Password Can't be null or Empty");
+        }
+        logger.info("UserServiceImpl::login, ❓loginInfo found::" + true);
         String email = loginInfo.getEmail();
-        String password = loginInfo.getPassword();
         Optional<UserEntity> userEntity = userRepository.findByEmail(email);
-        if (userEntity.isPresent()){
-            if (userEntity.get().getEmail().equalsIgnoreCase(email) && userEntity.get().getPassword().equals(encoder.encode(password))){
-                return true;
-            }else {
-                throw new UserNotFoundException("Email or Password is wrong!");
-            }
-        }else {
-            throw new UserNotFoundException("Invalid Email Address!");
+        logger.info("UserServiceImpl::login, ❓loginInfo exists::" + userEntity.isPresent());
+        logger.info("UserServiceImpl::login, ❓logging pwd match::" + encoder.matches(loginInfo.getPassword(), userEntity.get().getPassword()));
+        if (encoder.matches(loginInfo.getPassword(), userEntity.get().getPassword())) {
+            return true;
+        } else {
+            throw new UserNotFoundException("Email or Password is wrong!");
         }
     }
 
     @Override
     public String forget(String email) {
-        UserEntity userEntity= new UserEntity();
-        Optional<UserEntity> user = userRepository.findByEmail(email);
-        String randomPassword =null;
-        if (user.isPresent()){
-            logger.info("UserServiceImpl:forget, Before update password::"+user.get().getPassword());
-            randomPassword = user.get().getRandomPassword();
-            BeanUtils.copyProperties(user.get(),userEntity);
-            userEntity.setRandomPassword(Arrays.toString(generatePassword(8)));
-            userEntity.setPassword(encoder.encode(randomPassword));
-            UserEntity updateUserPassword = userRepository.save(userEntity);
-            logger.info("UserServiceImpl:forget, After update password::"+updateUserPassword.toString());
-            logger.info("PWD::"+randomPassword);
-            return randomPassword;
-        }else {
-            throw new UserNotFoundException("Invalid Email Address!");
+        if (email == null || email.trim().isEmpty()) {
+            throw new IncompleteUserInfoException("Email can't be null or empty");
         }
+        logger.info("UserServiceImpl::forget, ❓request email::" + email);
+
+        Optional<UserEntity> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("Email not found!");
+        }
+
+        UserEntity user = userOptional.get();
+        logger.info("UserServiceImpl::forget, ❓request email found::" + true);
+        logger.info("UserServiceImpl::forget, 👻entity before::" + user.toString());
+
+        // Generate a new random password and set it to the user entity
+        String randomPassword = generatePassword(8);
+        user.setRandomPassword(randomPassword);
+
+        // Set the encoded version of the new random password as the user's password
+        user.setPassword(encoder.encode(randomPassword));
+
+        // Save the updated user entity to the repository
+        UserEntity updateUserPassword = userRepository.save(user);
+        logger.info("UserServiceImpl:forget, After update password::" + updateUserPassword.toString());
+        logger.info("UserServiceImpl::forget, 👻entity after::" + updateUserPassword.toString());
+        logger.info("PWD::" + randomPassword);
+
+        return randomPassword;
     }
 
-    public char[] generatePassword(int len) {
+    public String generatePassword(int len) {
         String capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String smallLetters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
-        String specialCharacters = "!@#$%^&*_=+-?<>)";
+        String specialCharacters = "!@#$%^&*_=+-?<>";
 
         String values = capitalLetters + smallLetters + numbers + specialCharacters;
 
@@ -208,7 +222,7 @@ public class UserServiceImpl implements IUserService {
         password[2] = numbers.charAt(random.nextInt(numbers.length()));
         password[3] = specialCharacters.charAt(random.nextInt(specialCharacters.length()));
 
-        return password;
+        return Arrays.toString(password);
     }
 
 
