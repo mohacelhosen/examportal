@@ -31,7 +31,7 @@ public class UserRestController {
     private IUserService userService;
 
     //    <--------------------- register the user ------------------->
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<UserModel> signUp(@RequestBody UserModel userModel) {
         logger.info("UserRestController::signUp, 🤖Model=>"+userModel.toString());
         UserModel registerUser = userService.registerUser(userModel);
@@ -79,7 +79,7 @@ public class UserRestController {
     }
 
     //    <---------------------- login -------------------------->
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<String> login(@RequestBody LoginModel loginInfo) {
         boolean login = userService.login(loginInfo);
         String message = null;
@@ -100,7 +100,7 @@ public class UserRestController {
     }
 
 
-    @PostMapping("/authenticate")
+    @PostMapping("/auth/authenticate")
     public String authenticateAndGetToken(@RequestBody LoginModel authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {

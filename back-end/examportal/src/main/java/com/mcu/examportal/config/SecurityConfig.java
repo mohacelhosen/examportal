@@ -40,19 +40,16 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authRequest ->
                         authRequest.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html", "/webjars/**").permitAll()
-                                .requestMatchers("/api/exam-portal/signup", "/api/exam-portal/login", "/api/exam-portal/authenticate").permitAll()
+                                .requestMatchers("/api/exam-portal/auth/**").permitAll()
                                 .requestMatchers("/api/exam-portal/**").authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
