@@ -6,21 +6,27 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Category {
+public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer cid;
+    private Integer qid;
     private String title;
     private String description;
-    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private String maxMarks;
+    private String numberOfQuestions;
+    private Boolean isActive;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Category category;
+
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Quiz> quizSet= new LinkedHashSet<>();
+    private Set<Question> questionSet = new HashSet<>();
 
 }
