@@ -26,4 +26,19 @@ public class GlobalExceptionHandler {
         model.setExceptionName(incompleteUserInfo.getMessage());
         return  new ResponseEntity<>(model, HttpStatus.ALREADY_REPORTED);
     }
+
+    @ExceptionHandler(InvalidRequestException.class)
+    public  ResponseEntity<ExceptionModel> invalidRequest(InvalidRequestException invalidRequestException){
+        ExceptionModel model = new ExceptionModel();
+        model.setCode("IR-404");
+        model.setExceptionName(invalidRequestException.getMessage());
+        return  new ResponseEntity<>(model, HttpStatus.ALREADY_REPORTED);
+    }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public  ResponseEntity<ExceptionModel> resourcesNotFound(ResourceNotFoundException resourceNotFoundException){
+        ExceptionModel model = new ExceptionModel();
+        model.setCode("RNF-404");
+        model.setExceptionName(resourceNotFoundException.getMessage());
+        return  new ResponseEntity<>(model, HttpStatus.ALREADY_REPORTED);
+    }
 }

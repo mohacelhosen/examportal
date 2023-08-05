@@ -6,7 +6,9 @@ import com.mcu.examportal.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -24,13 +26,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategory(Integer categoryId) {
+        repository.findById(categoryId)
         return null;
     }
 
     @Override
     public Set<Category> getCategories() {
         List<Category> categories = this.repository.findAll();
-        return (Set<Category>) categories;
+        return new HashSet<>(categories);
     }
 
     @Override
