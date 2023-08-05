@@ -1,6 +1,8 @@
 package com.mcu.examportal.controller;
 
 import com.mcu.examportal.entity.exam.Quiz;
+import com.mcu.examportal.exception.InvalidRequestException;
+import com.mcu.examportal.repository.QuizRepository;
 import com.mcu.examportal.service.QuizService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -15,6 +18,8 @@ import java.util.Set;
 @RequestMapping("/api/exam-portal/quiz")
 @Slf4j
 public class QuizController {
+    @Autowired
+    private QuizRepository quizRepository;
     @Autowired
     private QuizService quizService;
 
@@ -27,11 +32,16 @@ public class QuizController {
     }
 
     //    update the quiz
-    @PutMapping("/update")
-    public ResponseEntity<Quiz> updateQuiz(@RequestBody Quiz quiz) {
-        Quiz addQuiz = quizService.updateQuiz(quiz);
-        log.info("QuizController::updateQuiz, ✅");
-        return new ResponseEntity<>(addQuiz, HttpStatus.OK);
+    @PutMapping("/update/{quizId}")
+    public ResponseEntity<Quiz> updateQuiz(@RequestBody Quiz quiz, @PathVariable Integer quizId) {
+        Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
+        if (optionalQuiz.isPresent()){
+            quiz.setQid(optionalQuiz.get().getQid());
+            Quiz addQuiz = quizService.updateQuiz(quiz);
+            log.info("QuizController::updateQuiz, ✅");
+            return new ResponseEntity<>(addQuiz, HttpStatus.OK);
+        }
+        throw new InvalidRequestException("Question Id Not found!, ID::"+quizId);
     }
 
     //    get single quiz info by quiz-id
