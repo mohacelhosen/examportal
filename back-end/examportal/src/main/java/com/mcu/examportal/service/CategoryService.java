@@ -9,5 +9,5 @@ public interface CategoryService {
     public Category updateCategory(Category category);
     public Category getCategory(Integer categoryId);
     public Set<Category> getCategories();
-    public boolean deleteCategory(Integer categoryId);
+    public Boolean deleteCategory(Integer categoryId);
 }

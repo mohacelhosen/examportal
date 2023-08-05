@@ -1,6 +1,7 @@
 package com.mcu.examportal.service.impl;
 
 import com.mcu.examportal.entity.exam.Category;
+import com.mcu.examportal.exception.ResourceNotFoundException;
 import com.mcu.examportal.repository.CategoryRepository;
 import com.mcu.examportal.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository repository;
+
     @Override
     public Category addCategory(Category category) {
         return repository.save(category);
@@ -26,8 +29,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategory(Integer categoryId) {
-        repository.findById(categoryId)
-        return null;
+        Optional<Category> category = repository.findById(categoryId);
+        if (category.isPresent()) {
+            return category.get();
+        } else {
+            throw new ResourceNotFoundException("Resource Not Found!");
+        }
     }
 
     @Override
@@ -37,7 +44,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean deleteCategory(Integer categoryId) {
-        return false;
+    public Boolean deleteCategory(Integer categoryId) {
+        Optional<Category> category = repository.findById(categoryId);
+        if (category.isPresent()) {
+            repository.delete(category.get());
+            return true;
+        } else {
+            throw new ResourceNotFoundException("Category Not Found!, ID::"+categoryId);
+        }
     }
 }
