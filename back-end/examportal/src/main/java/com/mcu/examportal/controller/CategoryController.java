@@ -19,40 +19,49 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    //    create the category
     @PostMapping("/add")
-    public ResponseEntity<Category> addCategory(@RequestBody Category category){
+    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
         Category addCategory = categoryService.addCategory(category);
         log.info("CategoryController::addCategory, ✅");
-        return  new ResponseEntity<>(addCategory, HttpStatus.CREATED);
+        return new ResponseEntity<>(addCategory, HttpStatus.CREATED);
     }
+
+    //    get single category via categoryId
     @GetMapping("/{categoryId}")
-    public ResponseEntity<Category> getCategory(@PathVariable Integer categoryId){
+    public ResponseEntity<Category> getCategory(@PathVariable Integer categoryId) {
         Category category = categoryService.getCategory(categoryId);
         log.info("CategoryController::getCategory, ✅");
         return new ResponseEntity<>(category, HttpStatus.FOUND);
     }
+
+    //    get all the category list
     @GetMapping("/all")
-    public ResponseEntity<Set<Category>> getCategories(){
+    public ResponseEntity<Set<Category>> getCategories() {
         Set<Category> categories = categoryService.getCategories();
         log.info("CategoryController::getCategories, ✅");
-        return  new ResponseEntity<>(categories, HttpStatus.OK);
-    }
-    @PutMapping("/update")
-    public  ResponseEntity<Category> updateCategory(@RequestBody Category category){
-        Category updateCategory = categoryService.updateCategory(category);
-        log.info("CategoryController::updateCategory, ✅");
-        return  new ResponseEntity<>(updateCategory, HttpStatus.OK);
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+
+    //    update the category
+    @PutMapping("/update")
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category) {
+        Category updateCategory = categoryService.updateCategory(category);
+        log.info("CategoryController::updateCategory, ✅");
+        return new ResponseEntity<>(updateCategory, HttpStatus.OK);
+    }
+
+    //    delete category via categoryId
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Integer categoryId){
+    public ResponseEntity<?> deleteCategory(@PathVariable Integer categoryId) {
         Boolean isDeleted = categoryService.deleteCategory(categoryId);
-        String msg="Something Wrong!";
-        if (isDeleted){
-            msg="Delete Successfully";
+        String msg = "Something Wrong!";
+        if (isDeleted) {
+            msg = "Delete Successfully";
         }
         log.info("CategoryController::deleteCategory, ✅");
-        return  new ResponseEntity<>(msg, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(msg, HttpStatus.ACCEPTED);
     }
 
 
