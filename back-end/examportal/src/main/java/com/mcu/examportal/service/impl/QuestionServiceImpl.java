@@ -5,6 +5,7 @@ import com.mcu.examportal.entity.exam.Quiz;
 import com.mcu.examportal.exception.ResourceNotFoundException;
 import com.mcu.examportal.repository.QuestionRepository;
 import com.mcu.examportal.service.QuestionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 @Service
+@Slf4j
 public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private QuestionRepository repository;
     @Override
     public Question addQuestion(Question question) {
-        return repository.save(question);
+        log.info("QuestionServiceImpl::question, "+question.toString());
+        Question saveQuestion = repository.save(question);
+        log.info("QuestionServiceImpl::question, saveQuestion::"+saveQuestion.toString());
+        return saveQuestion;
     }
 
     @Override
