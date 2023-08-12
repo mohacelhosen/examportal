@@ -1,7 +1,12 @@
 package com.mcu.examportal.controller;
 
+import com.mcu.examportal.entity.UserEntity;
+import com.mcu.examportal.exception.InvalidRequestException;
+import com.mcu.examportal.exception.TokenValidationException;
 import com.mcu.examportal.model.LoginModel;
+import com.mcu.examportal.model.Token;
 import com.mcu.examportal.model.UserModel;
+import com.mcu.examportal.repository.UserRepository;
 import com.mcu.examportal.service.IUserService;
 import com.mcu.examportal.service.JwtService;
 import org.slf4j.Logger;
@@ -16,13 +21,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/exam-portal")
 public class UserRestController {
     Logger logger = LoggerFactory.getLogger(UserRestController.class);
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -33,13 +43,13 @@ public class UserRestController {
     //    <--------------------- register the user ------------------->
     @PostMapping("/auth/signup")
     public ResponseEntity<UserModel> signUp(@RequestBody UserModel userModel) {
-        logger.info("UserRestController::signUp, 🤖Model=>"+userModel.toString());
+        logger.info("UserRestController::signUp, 🤖Model=>" + userModel.toString());
         UserModel registerUser = userService.registerUser(userModel);
         logger.info("UserRestController:signUp, 🤖model::" + registerUser.toString());
 
         // Generate the JWT token with roles information
         String jwtToken = jwtService.generateToken(registerUser.getEmail());
-        logger.info("UserRestController::signup, ⭕Token::"+jwtToken);
+        logger.info("UserRestController::signup, ⭕Token::" + jwtToken);
         return new ResponseEntity<>(registerUser, HttpStatus.CREATED);
     }
 
@@ -80,16 +90,19 @@ public class UserRestController {
 
     //    <---------------------- login -------------------------->
     @PostMapping("/auth/login")
-    public ResponseEntity<String> login(@RequestBody LoginModel loginInfo) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginModel loginInfo) {
         boolean login = userService.login(loginInfo);
-        String message = null;
+        Map<String, String> response = new HashMap<>();
+
         if (login) {
-            message = "login Successful😇";
+            response.put("message", "Login Successful😇");
+            response.put("token", jwtService.generateToken(loginInfo.getEmail()));
         } else {
-            message = "login Fail😵";
+            response.put("message", "Login Fail😵");
         }
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     //    <----------- forget password ---------->
     @GetMapping("/forget/{email}")
@@ -110,6 +123,32 @@ public class UserRestController {
         }
 
     }
+
+    @PostMapping("/auth/token")
+    public ResponseEntity<Boolean> tokenValidationUrl(@RequestBody Token token) {
+        try {
+            Boolean validateToken = false; // Default value for failed validation
+            String userEmail = jwtService.extractUserEmail(token.getToken());
+            if (userEmail != null) {
+                Optional<UserEntity> user = userRepository.findByEmail(userEmail);
+                if (user.isPresent()) {
+                    validateToken = jwtService.validateToken(token.getToken(), user.get());
+                }
+            }
+            return new ResponseEntity<>(validateToken, HttpStatus.OK);
+        } catch (TokenValidationException e) {
+            // Handle token validation exception here
+            // Return a false response or appropriate error response
+            logger.info("⁉️"+e.getMessage());
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        } catch (Exception e) {
+            // Handle any other exceptions that might occur
+            // Return an error response or appropriate error status
+            logger.info("⁉️"+e.getMessage());
+            return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 }

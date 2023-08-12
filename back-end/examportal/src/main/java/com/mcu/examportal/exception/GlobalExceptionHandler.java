@@ -41,4 +41,11 @@ public class GlobalExceptionHandler {
         model.setExceptionName(resourceNotFoundException.getMessage());
         return  new ResponseEntity<>(model, HttpStatus.ALREADY_REPORTED);
     }
+    @ExceptionHandler(TokenValidationException.class)
+    public  ResponseEntity<ExceptionModel> resourcesNotFound(TokenValidationException tokenValidationException){
+        ExceptionModel model = new ExceptionModel();
+        model.setCode("TokenInvalid-404");
+        model.setExceptionName(tokenValidationException.getMessage());
+        return  new ResponseEntity<>(model, HttpStatus.ALREADY_REPORTED);
+    }
 }
