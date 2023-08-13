@@ -91,16 +91,17 @@ public class UserRestController {
     //    <---------------------- login -------------------------->
     @PostMapping("/auth/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginModel loginInfo) {
-        boolean login = userService.login(loginInfo);
+        boolean loginSuccessful = userService.login(loginInfo);
         Map<String, String> response = new HashMap<>();
 
-        if (login) {
+        if (loginSuccessful) {
             response.put("message", "Login Successful😇");
             response.put("token", jwtService.generateToken(loginInfo.getEmail()));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            response.put("message", "Login Fail😵");
+            response.put("message", "Email or Password is wrong!");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED); // Return 401 Unauthorized
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

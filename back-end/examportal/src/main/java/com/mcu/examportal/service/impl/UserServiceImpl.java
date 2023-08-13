@@ -154,19 +154,26 @@ public class UserServiceImpl implements IUserService {
     @Override
     public boolean login(LoginModel loginInfo) {
         if (loginInfo == null || loginInfo.getEmail() == null || loginInfo.getEmail().equals("") || loginInfo.getPassword() == null || loginInfo.getPassword().equals("")) {
-            throw new IncompleteUserInfoException("Email or Password Can't be null or Empty");
+            return false; // Return false for incomplete user info
         }
         logger.info("UserServiceImpl::login, ❓loginInfo found::" + true);
+
         String email = loginInfo.getEmail();
         Optional<UserEntity> userEntity = userRepository.findByEmail(email);
-        logger.info("UserServiceImpl::login, ❓loginInfo exists::" + userEntity.isPresent());
-        logger.info("UserServiceImpl::login, ❓logging pwd match::" + encoder.matches(loginInfo.getPassword(), userEntity.get().getPassword()));
-        if (encoder.matches(loginInfo.getPassword(), userEntity.get().getPassword())) {
-            return true;
+
+        if (userEntity.isPresent()) {
+            logger.info("UserServiceImpl::login, ❓loginInfo exists::" + true);
+            logger.info("UserServiceImpl::login, ❓logging pwd match::" + encoder.matches(loginInfo.getPassword(), userEntity.get().getPassword()));
+
+            // Return false for unsuccessful login
+            return encoder.matches(loginInfo.getPassword(), userEntity.get().getPassword()); // Return true for successful login
         } else {
-            throw new UserNotFoundException("Email or Password is wrong!");
+            logger.info("UserServiceImpl::login, ❓loginInfo exists::" + false);
+            return false; // User not found
         }
     }
+
+
 
     @Override
     public String forget(String email) {
