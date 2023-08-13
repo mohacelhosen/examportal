@@ -222,8 +222,11 @@ public class UserServiceImpl implements IUserService {
         password[2] = numbers.charAt(random.nextInt(numbers.length()));
         password[3] = specialCharacters.charAt(random.nextInt(specialCharacters.length()));
 
-        return Arrays.toString(password);
+        String pwd = new String(password);  // Convert the char array to a string
+        logger.info("Random password🔑::" + pwd);
+        return pwd;
     }
+
 
 
 }
