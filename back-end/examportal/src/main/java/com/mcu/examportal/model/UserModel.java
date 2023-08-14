@@ -17,4 +17,8 @@ public class UserModel {
     private String gender;
     private String password;
     private String designation;
+    private String userPhoto;
+    private String linkedin;
+    private String github;
+    private String facebook;
 }

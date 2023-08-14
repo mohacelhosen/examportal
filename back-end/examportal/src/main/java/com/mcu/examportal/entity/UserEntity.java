@@ -30,6 +30,10 @@ public class UserEntity implements UserDetails {
     private String password;
     private String randomPassword;
     private String roles;
+    private String userPhoto;
+    private String linkedin;
+    private String github;
+    private String facebook;
 
 
     @Override

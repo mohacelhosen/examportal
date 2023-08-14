@@ -38,6 +38,9 @@ public class JwtService {
 
             Map<String, Object> claims = new HashMap<>();
             claims.put("roles", roles); // Add the roles information to the claims
+            claims.put("userName",userEntity.getFirstName());
+            claims.put("userPhoto",userEntity.getUserPhoto());
+            logger.info("generateToken:: user photo, 📸"+userEntity.getUserPhoto());
 
             return createToken(claims, email);
         } else {
@@ -93,10 +96,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-//    public Boolean validateToken(String token, UserDetails userDetails) {
-//        final String username = extractUserEmail(token);
-//        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-//    }
+
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         try {
@@ -106,14 +106,11 @@ public class JwtService {
             if (!username.equals(userDetails.getUsername())) {
                 return false;
             }
-
             // Check if the token is expired
             if (isTokenExpired(token)) {
                 return false;
             }
-
             // Additional validation logic, if needed
-
             return true; // Token is valid
         } catch (Exception e) {
             // Log the error for debugging

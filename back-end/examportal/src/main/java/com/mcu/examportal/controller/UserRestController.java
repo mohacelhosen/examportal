@@ -55,18 +55,20 @@ public class UserRestController {
 
     //    <-------------------- Find user by Email ------------------>
     @GetMapping("/find/{userEmail}")
+    @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN','TEACHER')")
     public ResponseEntity<UserModel> findUserByEmail(@PathVariable String userEmail) {
         UserModel user = userService.getUser(userEmail);
         logger.info("✅UserRestController:findUserByEmail, user::" + user.toString());
-        return new ResponseEntity<>(user, HttpStatus.FOUND);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     //    <-------------------- update user information ------------------>
     @PutMapping("/update")
     public ResponseEntity<UserModel> updateUserInfo(@RequestBody UserModel user) {
+        logger.info("✅UserRestController:updateUserInfo,Before model::" + user.toString());
         UserModel updateUserInfo = userService.updateUserInfo(user);
-        logger.info("✅UserRestController:updateUserInfo, model::" + user.toString());
+        logger.info("✅UserRestController:updateUserInfo,After model::" + updateUserInfo.toString());
         return new ResponseEntity<>(updateUserInfo, HttpStatus.OK);
     }
 
