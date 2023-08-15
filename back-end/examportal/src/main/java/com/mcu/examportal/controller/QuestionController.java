@@ -41,10 +41,11 @@ public class QuestionController {
     public ResponseEntity<Question> getQuestion(@PathVariable Integer questionId) {
         Question question = questionService.getQuestion(questionId);
         log.info("QuestionController::getQuestion, ✅");
-        return new ResponseEntity<>(question, HttpStatus.FOUND);
+        return new ResponseEntity<>(question, HttpStatus.OK);
     }
 
 
+    @GetMapping("/questions/all")
     public ResponseEntity<Set<Question>> getAllQuestion() {
         Set<Question> questionSet = questionService.questionList();
         log.info("QuestionController::getAllQuestion, ✅");
@@ -55,7 +56,7 @@ public class QuestionController {
     @GetMapping("/quiz/{quizId}")
     public ResponseEntity<?> allQuestionAccordingToQuiz(@PathVariable Integer quizId) {
         Quiz quiz = new Quiz();
-        quiz.setQid(quizId);
+        quiz.setQuizId(quizId);
         Set<Question> questionListAccordingToQuiz = this.questionService.getQuestionOfQuiz(quiz);
         return new ResponseEntity<>(questionListAccordingToQuiz, HttpStatus.OK);
     }
@@ -69,7 +70,7 @@ public class QuestionController {
             msg = "Delete Successfully";
         }
         log.info("QuestionController::deleteQuestion, ✅");
-        return new ResponseEntity<>(msg, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
 }

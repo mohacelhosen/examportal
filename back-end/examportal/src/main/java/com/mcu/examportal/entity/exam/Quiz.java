@@ -16,16 +16,16 @@ import java.util.Set;
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer qid;
+    private Integer quizId;
     private String title;
     private String description;
     private String maxMarks;
     private String numberOfQuestions;
     private Boolean isActive;
     @ManyToOne(fetch = FetchType.EAGER)
-    private Category category;
+    private Category categoryId;
 
-    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "quizId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Question> questionSet = new HashSet<>();
 

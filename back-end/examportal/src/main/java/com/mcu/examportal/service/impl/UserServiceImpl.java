@@ -61,6 +61,7 @@ public class UserServiceImpl implements IUserService {
             logger.info("UserServiceImpl:registerUser, before saved::" + userEntity.toString());
             userEntity.setRandomPassword(generatePassword(8));
             // After setting the roles in userEntity based on userModel.getDesignation()
+            userEntity.setUserPhoto("../../../assets/no-avatar.png");
             UserEntity savedUser = userRepository.save(userEntity);
 
 

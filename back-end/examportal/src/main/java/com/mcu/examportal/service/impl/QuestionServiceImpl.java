@@ -48,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Set<Question> getQuestionOfQuiz(Quiz quiz) {
-        return  repository.findByQuiz(quiz);
+        return  repository.findByQuizId(quiz);
     }
 
     @Override

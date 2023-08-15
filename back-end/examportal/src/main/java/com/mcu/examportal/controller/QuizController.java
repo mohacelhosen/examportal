@@ -36,7 +36,7 @@ public class QuizController {
     public ResponseEntity<Quiz> updateQuiz(@RequestBody Quiz quiz, @PathVariable Integer quizId) {
         Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
         if (optionalQuiz.isPresent()){
-            quiz.setQid(optionalQuiz.get().getQid());
+            quiz.setQuizId(optionalQuiz.get().getQuizId());
             Quiz addQuiz = quizService.updateQuiz(quiz);
             log.info("QuizController::updateQuiz, ✅");
             return new ResponseEntity<>(addQuiz, HttpStatus.OK);
@@ -47,9 +47,10 @@ public class QuizController {
     //    get single quiz info by quiz-id
     @GetMapping("/{quizId}")
     public ResponseEntity<?> getQuiz(@PathVariable Integer quizId) {
+        log.info("QuizController::getQuiz,"+quizId);
         Quiz quiz = quizService.getQuiz(quizId);
-        log.info("QuizController::getQuiz, ✅");
-        return new ResponseEntity<>(quiz, HttpStatus.FOUND);
+        log.info("QuizController::getQuiz, ✅"+quiz.toString());
+        return new ResponseEntity<>(quiz, HttpStatus.OK);
     }
 
     //    get all quiz info
@@ -69,7 +70,7 @@ public class QuizController {
             msg = "Delete Successfully";
         }
         log.info("QuizController::deleteCategory, ✅");
-        return new ResponseEntity<>(msg, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
 
