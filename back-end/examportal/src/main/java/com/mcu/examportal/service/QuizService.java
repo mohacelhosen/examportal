@@ -1,5 +1,6 @@
 package com.mcu.examportal.service;
 
+import com.mcu.examportal.entity.exam.Category;
 import com.mcu.examportal.entity.exam.Quiz;
 
 import java.util.Set;
@@ -10,4 +11,5 @@ public interface QuizService {
     public Quiz getQuiz(Integer quizId);
     public Set<Quiz> quizSet();
     public Boolean deleteQuiz(Integer quizId);
+    public Set<Quiz> getQuizOfCategories(Category category);
 }

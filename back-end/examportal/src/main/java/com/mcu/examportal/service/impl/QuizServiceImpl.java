@@ -1,5 +1,6 @@
 package com.mcu.examportal.service.impl;
 
+import com.mcu.examportal.entity.exam.Category;
 import com.mcu.examportal.entity.exam.Quiz;
 import com.mcu.examportal.exception.ResourceNotFoundException;
 import com.mcu.examportal.repository.QuizRepository;
@@ -48,5 +49,10 @@ public class QuizServiceImpl implements QuizService {
         } else {
             throw new ResourceNotFoundException("This Quiz Not Found!, ID::"+quizId);
         }
+    }
+
+    @Override
+    public Set<Quiz> getQuizOfCategories(Category category) {
+        return  quizRepository.findByCategoryObject(category);
     }
 }

@@ -32,7 +32,7 @@ public class CategoryController {
     public ResponseEntity<Category> getCategory(@PathVariable Integer categoryId) {
         Category category = categoryService.getCategory(categoryId);
         log.info("CategoryController::getCategory, ✅");
-        return new ResponseEntity<>(category, HttpStatus.FOUND);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     //    get all the category list
@@ -61,7 +61,7 @@ public class CategoryController {
             msg = "Delete Successfully";
         }
         log.info("CategoryController::deleteCategory, ✅");
-        return new ResponseEntity<>(msg, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
 

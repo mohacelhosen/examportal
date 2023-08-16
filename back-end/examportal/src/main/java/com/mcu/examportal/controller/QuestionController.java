@@ -3,6 +3,8 @@ package com.mcu.examportal.controller;
 
 import com.mcu.examportal.entity.exam.Question;
 import com.mcu.examportal.entity.exam.Quiz;
+import com.mcu.examportal.repository.QuestionRepository;
+import com.mcu.examportal.repository.QuizRepository;
 import com.mcu.examportal.service.QuestionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -19,6 +22,9 @@ import java.util.Set;
 public class QuestionController {
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private QuizRepository quizRepository;
 
     //    add question
     @PostMapping("/add")
@@ -57,6 +63,8 @@ public class QuestionController {
     public ResponseEntity<?> allQuestionAccordingToQuiz(@PathVariable Integer quizId) {
         Quiz quiz = new Quiz();
         quiz.setQuizId(quizId);
+        Optional<Quiz> quizobject = quizRepository.findById(quizId);
+        quiz.setCategoryObject(quizobject.get().getCategoryObject());
         Set<Question> questionListAccordingToQuiz = this.questionService.getQuestionOfQuiz(quiz);
         return new ResponseEntity<>(questionListAccordingToQuiz, HttpStatus.OK);
     }

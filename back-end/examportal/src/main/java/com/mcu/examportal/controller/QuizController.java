@@ -1,7 +1,10 @@
 package com.mcu.examportal.controller;
 
+import com.mcu.examportal.entity.exam.Category;
+import com.mcu.examportal.entity.exam.Question;
 import com.mcu.examportal.entity.exam.Quiz;
 import com.mcu.examportal.exception.InvalidRequestException;
+import com.mcu.examportal.repository.CategoryRepository;
 import com.mcu.examportal.repository.QuizRepository;
 import com.mcu.examportal.service.QuizService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,9 @@ import java.util.Set;
 public class QuizController {
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
     @Autowired
     private QuizService quizService;
 
@@ -71,6 +77,17 @@ public class QuizController {
         }
         log.info("QuizController::deleteCategory, ✅");
         return new ResponseEntity<>(msg, HttpStatus.OK);
+    }
+
+    //    get a Quizzes via categoryId
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?> allQuizAccordingToCategory(@PathVariable Integer categoryId) {
+        Category category= new Category();
+        category.setCategoryId(categoryId);
+        Optional<Category> categoryObject = categoryRepository.findById(categoryId);
+        category.setQuizSet(categoryObject.get().getQuizSet());
+        Set<Quiz> quizOfCategories = this.quizService.getQuizOfCategories(category);
+        return new ResponseEntity<>(quizOfCategories, HttpStatus.OK);
     }
 
 
