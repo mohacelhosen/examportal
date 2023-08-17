@@ -90,5 +90,4 @@ public class QuizController {
         return new ResponseEntity<>(quizOfCategories, HttpStatus.OK);
     }
 
-
 }
